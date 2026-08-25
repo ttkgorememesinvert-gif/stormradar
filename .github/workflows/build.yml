@@ -21,11 +21,16 @@ jobs:
           distribution: temurin
           java-version: '8'
 
-      - name: Compilar
+      - name: Give gradlew permission to execute
+        working-directory: extracted
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (com nova tentativa automatica)
         working-directory: extracted
         run: |
-          chmod +x gradlew
-          ./gradlew build --stacktrace --no-daemon
+          ./gradlew build --stacktrace --no-daemon || \
+          (echo "Primeira tentativa falhou, tentando novamente (comum no ForgeGradle 2.3)..." && \
+           ./gradlew build --stacktrace --no-daemon)
 
       - name: Guardar o .jar pronto
         uses: actions/upload-artifact@v4
